@@ -48,6 +48,9 @@ datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
 {binary}            {return BINARY;}
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
+[\t]                {/*ignore whitespace*/}
+[\n]                {return NEWLINE;}
+.                   {return *yytext;}
 
 %%
 
