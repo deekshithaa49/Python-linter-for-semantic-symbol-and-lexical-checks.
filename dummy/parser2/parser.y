@@ -1,35 +1,76 @@
 %{
-  #include<stdio.h>
-  
-  int yylex();
-  int yywrap();
-  void yyerror(const char* s); 
+#include <stdio.h>
+#include <stdlib.h>
+
+int yylex();
+int yywrap();
+void yyerror(const char *s);
 %}
 
-%token FOR IF ELSE ID DIGIT UNARY BINARY DATATYPE TRUE FALSE RETURN RANGE INPUT PRINT SEPERATOR COLON DEF BREAK NONE ELIF CONTINUE PASS TRY EXCEPT IMPORT AS CLASS FINNALLY FROM TYPE LEN MIN MAX SORT REVERSE SUM SLICE 
+%token FOR IF ELSE ID DIGIT UNARY BINARY DATATYPE TRUE FALSE RETURN RANGE INPUT PRINT SEPARATOR COLON DEF BREAK NONE ELIF CONTINUE PASS TRY EXCEPT IMPORT AS CLASS FINALLY FROM TYPE LEN MIN MAX SORT REVERSE SUM SLICE NEWLINE INDENT DEDENT STRING
 
 %%
+main: 
+    DEF "main" '(' ')' COLON NEWLINE INDENT statements RETURN DEDENT
+    ;
 
-program: headers main '(' ')' '{' body return '}'
-;
+statements: 
+    statement 
+    | statements statement
+    ;
 
-body: expressions 
-|loops 
-|conditionals
-|body expression
-|body loops
-|body conditionals
-;
+statement:
+    assignment
+    | conditional
+    | loop
+    | function_call
+    | input
+    | print_statement
+    ;
 
-looops: FOR ID IN block COLON body
-;
+assignment:
+    ID "=" expr
+    {
+        printf("Assignment to %s\n", $1);
+    }
+    ;
 
-expressions: expressions statement ';'
+expr: 
+    DIGIT 
+    | ID
+    | expr '+' expr
+    | expr '-' expr 
+    | expr '*' expr 
+    | expr '/' expr 
+    ;
 
+conditional:
+    IF expr COLON NEWLINE INDENT statements DEDENT
+    ;
+
+loop:
+    FOR ID IN RANGE '(' DIGIT ')' COLON NEWLINE INDENT statements DEDENT
+    ;
+
+input:
+    ID "=" DATATYPE '(' INPUT '(' STRING ')' ')'
+    ;
+
+print_statement:
+    PRINT '(' STRING ')'
+    ;
+
+return_stmt:
+    RETURN expr
+    ;
 %%
+int main() {
+    printf("Parsing starts...\n");
+    yyparse();
+    printf("Parsing completed.\n");
+    return 0;
+}
 
-def main:
-  yyparse();
-
-def yyerror(const char* msg):
-  fprint(msg)
+void yyerror(const char *msg) {
+    fprintf(stderr, "Error: %s\n", msg);
+}
