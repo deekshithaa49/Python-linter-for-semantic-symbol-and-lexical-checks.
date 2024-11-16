@@ -4,3 +4,6 @@
     int indent_level=0;
 %}
 %option yylineno
+
+num       [0-9]+
+id        [
