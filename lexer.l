@@ -1,7 +1,7 @@
 %{
     #include "y.tab.h"
     #include<string.h>
-    #include<sstdio.h>
+    #include<stdio.h>
 
     int current_indent = 0;        
     int indent_stack[100];          
@@ -21,13 +21,13 @@
     }
 %}
 
-digit      [0-9]+
+num      [0-9]+
 float_num  [0-9]+\.[0-9]+
 id         [a-zA-Z][a-zA-Z0-9_]*
 unary      \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
 binary     &|||^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
 datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
-comments   \#([^\n]*)|\'\'\'([^\']*)\'\'\'|\"\"\"([^\"]*)\"\"\"
+comments   \#([^\n]*)|\'\'\'(.*?)(\'\'\')|\"\"\"(.*?)(\"\"\")
 string      \"[^\"]*\"|'[^\']*\'
 
 %%
@@ -66,21 +66,23 @@ string      \"[^\"]*\"|'[^\']*\'
 "sum"               {return SUM;}
 "slice"             {return SLICE;}
 
-{digit}             {return DIGIT;}
+{num}               {return NUM;}
 {id}                {return ID;}
 {binary}            {return BINARY;}
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
-{string}           {return STRING;}
+{string}            {return STRING;}
 {float_num}         {return FLOAT_NUM;}
 {comments}          {return COMMENT;}
 
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
-.                   {return *yytext;}
+.                   {fprintf(stderr, "Unexpected character: %s\n", yytext); return ERROR;}
+
 
 [ \t]+ {
     int new_indent = strlen(yytext); 
+
     while (new_indent < current_indent) {
         current_indent = pop_indent();
         return DEDENT;
