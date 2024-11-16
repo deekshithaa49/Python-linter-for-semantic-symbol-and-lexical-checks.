@@ -10,6 +10,7 @@ datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
 
 %%
 
+#.*                 {/* Ignore comments */ }
 "for"               {return FOR;}
 "if"                {return IF;}
 "else"              {return ELSE;}
@@ -48,7 +49,8 @@ datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
 {binary}            {return BINARY;}
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
-[\t]                {/*ignore whitespace*/}
+[ \t]*              {/*ignore whitespace*/}
+[ \t]+              {/* Handle indentation*/}
 [\n]                {return NEWLINE;}
 .                   {return *yytext;}
 
