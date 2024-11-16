@@ -21,7 +21,7 @@ string   "\.*?\"|'[^'*']
 {num}	    { return NUMBER;}
 {id}	    { return ID;}
 {string}    { return STRING;}
-[ \t]+	    { /*ignore whitespace */ } 
+[ \t]+	    {return INDENT;} 
 "\n"        { return NEWLINE;}
 .	        { return *yytext; }
 
