@@ -55,7 +55,7 @@ string      \"[^\"]*\"|'[^\']*\'
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
 [ \t]*              {/*ignore whitespace*/}
-\n                {return NEWLINE;}
+\n                  {return NEWLINE;}
 .                   {return *yytext;}
 [ \t]+ {
     int new_indent = strlen(yytext);
