@@ -3,14 +3,19 @@
 %}
 
 digit      [0-9]+
+float_num  [0-9]+\.[0-9]+
 id         [a-zA-Z]+
 unary      +|-||//|%|*|~|and|or|not|is|is\ not
 binary     &|||^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
 datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
+comments   \#[^\n]*|\'''\[^\n]*'''|"""\[^\n]*"""
+string      \"[^\"]*\"|'[^\']*\'
 
 %%
 
-#.*                 {/* Ignore comments */ }
+"string"            {return STRING;}
+"float_num"         {return FLOAT_NUM;}
+"comments"          {return COMMENT;}
 "for"               {return FOR;}
 "if"                {return IF;}
 "else"              {return ELSE;}
@@ -50,9 +55,21 @@ datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
 [ \t]*              {/*ignore whitespace*/}
-[ \t]+              {/* Handle indentation*/}
-[\n]                {return NEWLINE;}
+\n                {return NEWLINE;}
 .                   {return *yytext;}
+[ \t]+ {
+    int new_indent = strlen(yytext);
+    while (new_indent < current_indent) {
+        current_indent = pop_indent();
+        return DEDENT;
+    }
+
+    if (new_indent > current_indent) {
+        push_indent(current_indent);
+        current_indent = new_indent;
+        return INDENT;
+    }
+}
 
 %%
 
