@@ -6,9 +6,8 @@ num	    [0-9]+
 id	    [a-zA-Z]+
 unary	+|-|*|//|%|**|~|and|or|not|is|is\ not
 binary   &|||^|<|>|==|!=|<=|>=|=|+=|-=|*=|/=|%=|**=|/\/=|&=|\|=|^=|<<|>>
-separator   "||"|,|:|'||'|
-string   "\.*?\"|'[^'*']
-%%
+string         "[^\"]*\"|\'[^\']*\'
+comment        #[^\n]*|"""\"""|'''\'''|
 
 "for"	    { return FOR; }
 "in"        { return IN; }
