@@ -1,21 +1,37 @@
 %{
     #include "y.tab.h"
+    #include<string.h>
+    #include<sstdio.h>
+
+    int current_indent = 0;        
+    int indent_stack[100];          
+    int indent_top = -1;            
+
+    void push_indent(int indent) {
+        if (indent_top < 99) { 
+            indent_stack[++indent_top] = indent;
+        }
+    }
+
+    int pop_indent() {
+        if (indent_top >= 0) {
+            return indent_stack[indent_top--];
+        }
+        return 0;  
+    }
 %}
 
 digit      [0-9]+
 float_num  [0-9]+\.[0-9]+
-id         [a-zA-Z]+
-unary      +|-||//|%|*|~|and|or|not|is|is\ not
+id         [a-zA-Z][a-zA-Z0-9_]*
+unary      \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
 binary     &|||^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
 datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
-comments   \#[^\n]*|\'''\[^\n]*'''|"""\[^\n]*"""
+comments   \#([^\n]*)|\'\'\'([^\']*)\'\'\'|\"\"\"([^\"]*)\"\"\"
 string      \"[^\"]*\"|'[^\']*\'
 
 %%
 
-"string"            {return STRING;}
-"float_num"         {return FLOAT_NUM;}
-"comments"          {return COMMENT;}
 "for"               {return FOR;}
 "if"                {return IF;}
 "else"              {return ELSE;}
@@ -49,22 +65,28 @@ string      \"[^\"]*\"|'[^\']*\'
 "reverse"           {return REVERSE;}
 "sum"               {return SUM;}
 "slice"             {return SLICE;}
+
 {digit}             {return DIGIT;}
 {id}                {return ID;}
 {binary}            {return BINARY;}
 {unary}             {return UNARY;}
 {datatype}          {return DATATYPE;}
+{string}           {return STRING;}
+{float_num}         {return FLOAT_NUM;}
+{comments}          {return COMMENT;}
+
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
 .                   {return *yytext;}
+
 [ \t]+ {
-    int new_indent = strlen(yytext);
+    int new_indent = strlen(yytext); 
     while (new_indent < current_indent) {
         current_indent = pop_indent();
         return DEDENT;
     }
 
-    if (new_indent > current_indent) {
+    if (new_indent > current_indent) { 
         push_indent(current_indent);
         current_indent = new_indent;
         return INDENT;
