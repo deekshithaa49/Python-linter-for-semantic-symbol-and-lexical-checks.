@@ -1,6 +1,5 @@
 %{
     #include "y.tab.h"
-    int indent_level = 0;
 %}
 
 digit      [0-9]+
@@ -52,7 +51,7 @@ datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
 {datatype}          {return DATATYPE;}
 [ \t]*              {/*ignore whitespace*/}
 [ \t]+              {/* Handle indentation*/}
-[\n]                { indent_level=0;}
+[\n]                {return NEWLINE;}
 .                   {return *yytext;}
 
 %%
