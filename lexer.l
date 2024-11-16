@@ -2,6 +2,7 @@
     #include "y.tab.h"
     #include<string.h>
     #include<stdio.h>
+    
 
     int current_indent = 0;        
     int indent_stack[100];          
@@ -23,7 +24,7 @@
 
 num      [0-9]+
 float_num  [0-9]+\.[0-9]+
-id         [a-zA-Z][a-zA-Z0-9_]*
+id         [a-zA-Z_][a-zA-Z0-9_]*
 unary      \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
 binary     &|||^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
 datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
