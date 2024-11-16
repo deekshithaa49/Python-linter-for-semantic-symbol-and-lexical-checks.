@@ -48,10 +48,94 @@
 
 %}
 
-%
+%token NUM ID IF ELSE FOR RANGE INPUT PRINT SEPERATOR COLON DEF BREAK NONE ELIF CONTINUE PASS TRY EXCEPT IMPORT AS CLASS FINALLY FROM TYPE LEN MIN MAX SORT REVERSE SUM SLICE
+%token UNARY BINARY DATATYPE STRING FLOAT_NUM COMMENT
+%token NEWLINE INDENT DEDENT
+%left '+' '-'
+%left '*' '/'
 
 %%
+  program:
+    statements
+    ;
 
+statements:
+  statement
+  |statements statement
+  ;
+
+statement:
+  assignment
+  |conditional
+  |loop
+  |print_statement
+  |return_statement
+  ;
+
+assignment:
+  ID '=' expression{
+    int value=$3;
+    if(add_symbol($1, value) == -1){
+      fprintf(stderr, "Error: Symbol table overflow.\n");
+      exit(1);
+    }
+  }
+  ;
+
+conditional:
+  IF expression COLON statements ESLE COLON statements{
+    if($2){
+      $$=$5;
+    }
+    else{
+      $$=$7;
+    }
+  }
+  ;
+
+loop:
+  FOR ID IN RANGE expression COLON statements{
+    int range_val=$5;
+    for(int i=0;i<val_range;i++){
+      add_symbol($2,i);
+      $$=$7;
+    }
+  }
+  ;
+
+print_statement:
+  PRINT expresion{
+    printf("%d\n", $2);
+  }
+  ;
+
+  return_statement:
+    RETURN NUM {
+        $$ = $2;
+    }
+    ;
+
+expression:
+    NUM {
+        $$ = $1;
+    }
+    | ID {
+        $$ = get_symbol_value($1);
+    }
+    | expression '+' expression {
+        $$ = $1 + $3;
+    }
+    | expression '-' expression {
+        $$ = $1 - $3;
+    }
+    | expression '*' expression {
+        $$ = $1 * $3;
+    }
+    | expression '/' expression {
+        $$ = $1 / $3;
+    }
+    ;
+  
 %%
 
 int main(){
