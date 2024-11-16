@@ -11,6 +11,8 @@
     void push_indent(int indent) {
         if (indent_top < 99) { 
             indent_stack[++indent_top] = indent;
+        }else{
+            fprintf(stderr,"Indentation stack overflow\n");
         }
     }
 
