@@ -18,7 +18,6 @@ for_loop: FOR ID IN  RANGE expression COLON block
 ;
 
 expression: ID
-          | RANGE
           | PARA expression PARA
           | NUM
           | expression '+' expression
