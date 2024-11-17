@@ -24,14 +24,14 @@ string     \"[^\"]\"|'[^\']\'
 "print"             {return PRINT;}
 ":"                 {return COLON;}
 
-{num}               {printf("Matched NUM: %s\n", yytext); return NUM;}
-{datatype}  { printf("Matched DATATYPE: %s\n", yytext); return DATATYPE; }
-{id}        { printf("Matched ID: %s\n", yytext); return ID; }
-{binary}            {return BINARY;}
-{unary}             {return UNARY;}
-{string}            {return STRING;}
-{float_num}         {return FLOAT_NUM;}
-{comments}          {return COMMENT;}
+{num}               {printf("NUM: %s\n", yytext); return NUM;}
+{datatype}          { printf("DATATYPE: %s\n", yytext); return DATATYPE; }
+{id}                { printf("ID: %s\n", yytext); return ID; }
+{binary}            {printf("BINARY: %s\n", yytext);return BINARY;}
+{unary}             {printf("UNARY: %s\n", yytext);return UNARY;}
+{string}            {printf("STRING: %s\n", yytext);return STRING;}
+{float_num}         {printf("FLOAT_NUMBER: %s\n", yytext);return FLOAT_NUM;}
+{comments}          {printf("COMMENT: %s\n", yytext);return COMMENT;}
 
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
@@ -41,5 +41,5 @@ string     \"[^\"]\"|'[^\']\'
 %%
 
 int yywrap(){
-  return 1;
+   return 1;
 }
