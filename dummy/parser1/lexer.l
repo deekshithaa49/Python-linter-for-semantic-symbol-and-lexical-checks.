@@ -15,14 +15,14 @@ string     \"[^\"]\"|'[^\']\'
 
 %%
 
-"for"               {return FOR;}
-"in"                {return IN;}
-"True"              {return TRUE;}
-"False"             {return FALSE;}
-"return"            {return RETURN;} 
-"range"             {return RANGE;}
-"print"             {return PRINT;}
-":"                 {return COLON;}
+"for"               {printf("FOR: %s\n", yytext);return FOR;}
+"in"                {printf("IN: %s\n", yytext);return IN;}
+"True"              {printf("TRUE: %s\n", yytext);return TRUE;}
+"False"             {printf("NUM: %s\n", yytext);return FALSE;}
+"return"            {printf("NUM: %s\n", yytext);return RETURN;} 
+"range"             {printf("RANGE: %s\n", yytext);return RANGE;}
+"print"             {printf("PRINT: %s\n", yytext);return PRINT;}
+":"                 {printf("COLON: %s\n", yytext);return COLON;}
 
 {num}               {printf("NUM: %s\n", yytext); return NUM;}
 {datatype}          { printf("DATATYPE: %s\n", yytext); return DATATYPE; }
