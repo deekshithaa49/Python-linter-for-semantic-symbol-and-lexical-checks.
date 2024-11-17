@@ -1,61 +1,63 @@
 %{
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
     #include "y.tab.h"
+
+    void add(char *symbol_type, char *symbol_name, char *data_type, int line_no);
+    int search(char *symbol_name);
+
+    struct symbol {
+        char *name;
+        char *type;
+        char *data_type;
+        int line_no;
+    } symbol_table[100]; // Simple symbol table with a maximum of 100 symbols
+    int symbol_count = 0;
+    extern int yylineno; // Line number from the lexer
 %}
 
-digit      [0-9]+
-id         [a-zA-Z]+
-unary      +|-||//|%|*|~|and|or|not|is|is\ not
-binary     &|||^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
-datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
+%option noyywrap
+
+/* Token definitions */
+INCLUDE  "#include"
+FOR      "for"
+IF       "if"
+ELSE     "else"
+RETURN   "return"
+ID       [a-zA-Z_][a-zA-Z0-9_]*
+NUMBER   [0-9]+
+DATATYPE int|float|char
+UNARY    \+|\-|\|\||\/\/|\%|\*|~|and|or|not
+BINARY   &|^|<|>|==|!=
+STRLT    \"[^\"]*\"
+
+/* Skip spaces and tabs */
+%ignore [ \t]
 
 %%
 
-#.*                 {/* Ignore comments */ }
-"for"               {return FOR;}
-"if"                {return IF;}
-"else"              {return ELSE;}
-"in"                {return IN;}
-"True"              {return TRUE;}
-"False"             {return FALSE;}
-"return"            {return RETURN;} 
-"range"             {return RANGE;}
-"input"             {return INPUT;}
-"print"             {return PRINT;}
-","                 {return SEPERATOR;}
-":"                 {return COLON;}
-"def"               {return DEF;}
-"break"             {return BREAK;}
-"None"              {return NONE;}
-"elif"              {return ELIF;}
-"continue"          {return CONTINUE;}
-"pass"              {return PASS;}
-"try"               {return TRY;}
-"except"            {return EXCEPT;}
-"import"            {return IMPORT;}
-"as"                {return AS;}
-"class"             {return CLASS;}
-"finally"           {return FINALLY;}
-"from"              {return FROM;}
-"type"              {return TYPE;}
-"len"               {return LEN;}
-"min"               {return MIN;}
-"max"               {return MAX;}
-"sort"              {return SORT;}
-"reverse"           {return REVERSE;}
-"sum"               {return SUM;}
-"slice"             {return SLICE;}
-{digit}             {return DIGIT;}
-{id}                {return ID;}
-{binary}            {return BINARY;}
-{unary}             {return UNARY;}
-{datatype}          {return DATATYPE;}
-[ \t]*              {/*ignore whitespace*/}
-[ \t]+              {/* Handle indentation*/}
-[\n]                {return NEWLINE;}
-.                   {return *yytext;}
+"#include"      { return INCLUDE; }
+"for"           { return FOR; }
+"if"            { return IF; }
+"else"          { return ELSE; }
+"return"        { return RETURN; }
+{DATATYPE}      { return DATATYPE; }
+{ID}            { return ID; }
+{NUMBER}        { return NUMBER; }
+{UNARY}         { return UNARY; }
+{BINARY}        { return BINARY; }
+{STRLT}         { return STRLT; }
+\n              { yylineno++; } /* Track line numbers */
+.               { return ERROR; }
 
 %%
 
-int yywrap(){
-  return 1;
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+int main() {
+    yylex();
+    return 0;
 }
