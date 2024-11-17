@@ -12,6 +12,7 @@ unary      \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
 binary     &|^|<|>|==|!=
 comments   \#([^\n])|\'\'\'(.?)(\'\'\')|\"\"\"(.*?)(\"\"\")
 string     \"[^\"]\"|'[^\']\'
+para       (|)
 
 %%
 
@@ -32,7 +33,7 @@ string     \"[^\"]\"|'[^\']\'
 {string}            {printf("STRING: %s\n", yytext);return STRING;}
 {float_num}         {printf("FLOAT_NUMBER: %s\n", yytext);return FLOAT_NUM;}
 {comments}          {printf("COMMENT: %s\n", yytext);return COMMENT;}
-
+{para}              {{printf("PARENTHESIS: %s\n", yytext);return para;}
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
 
