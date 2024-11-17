@@ -33,7 +33,7 @@ para       (|)
 {string}            {printf("STRING: %s\n", yytext);return STRING;}
 {float_num}         {printf("FLOAT_NUMBER: %s\n", yytext);return FLOAT_NUM;}
 {comments}          {printf("COMMENT: %s\n", yytext);return COMMENT;}
-{para}              {{printf("PARENTHESIS: %s\n", yytext);return PARA;}
+{para}              {printf("PARENTHESIS: %s\n", yytext);return PARA;}
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
 
@@ -42,5 +42,5 @@ para       (|)
 %%
 
 int yywrap(){
-   return 1;
+return 1;
 }
