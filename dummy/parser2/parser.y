@@ -1,17 +1,32 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "y.tab.h"
 
 int yylex();
-int yywrap();
 void yyerror(const char *s);
 %}
 
-%token FOR IF ELSE ID NUM UNARY BINARY DATATYPE TRUE FALSE RETURN RANGE INPUT PRINT SEPARATOR COLON DEF NEWLINE INDENT DEDENT STRING COMMENT
+%union {
+    int num;
+    char* id;
+    float float_num;
+}
+
+%token <id> ID
+%token <num> NUM
+%token <float_num> FLOAT_NUM
+%token FOR IF ELSE IN DATATYPE TRUE FALSE RETURN RANGE INPUT PRINT SEPERATOR COLON DEF NEWLINE INDENT DEDENT STRING COMMENT BINARY UNARY ERROR
+%token LPAREN RPAREN  ASSIGNMENT
+
+%left '+' '-'
+%left '*' '/'
+%left '='
 
 %%
+
 main: 
-    DEF "main" '(' ')' COLON NEWLINE INDENT statements RETURN DEDENT
+    DEF ID LPAREN RPAREN COLON NEWLINE INDENT statements RETURN DEDENT
     ;
 
 statements: 
@@ -29,14 +44,14 @@ statement:
     ;
 
 assignment:
-    ID "=" expr
+    ID '=' expr
     {
         printf("Assignment to %s\n", $1);
     }
     ;
 
 expr: 
-    DIGIT 
+    NUM 
     | ID
     | expr '+' expr
     | expr '-' expr 
@@ -49,28 +64,38 @@ conditional:
     ;
 
 loop:
-    FOR ID IN RANGE '(' DIGIT ')' COLON NEWLINE INDENT statements DEDENT
+    FOR ID IN RANGE LPAREN NUM RPAREN COLON NEWLINE INDENT statements DEDENT
     ;
 
 input:
-    ID "=" DATATYPE '(' INPUT '(' STRING ')' ')'
+    ID '=' DATATYPE LPAREN INPUT LPAREN STRING RPAREN RPAREN
     ;
 
 print_statement:
-    PRINT '(' STRING ')'
+    PRINT LPAREN STRING RPAREN
     ;
 
-return_stmt:
-    RETURN expr
-    ;
+function_call:
+    ID LPAREN args RPAREN
+    {
+        printf("Function call to %s\n", $1); 
+    }
+;
+
+args:
+    expr
+    | args SEPERATOR expr
+;
+
 %%
+
+void yyerror(const char *msg) {
+    fprintf(stderr, "Error: %s\n", msg);
+}
+
 int main() {
     printf("Parsing starts...\n");
     yyparse();
     printf("Parsing completed.\n");
     return 0;
-}
-
-void yyerror(const char *msg) {
-    fprintf(stderr, "Error: %s\n", msg);
 }
