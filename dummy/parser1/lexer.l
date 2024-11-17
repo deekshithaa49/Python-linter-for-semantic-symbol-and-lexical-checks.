@@ -33,7 +33,7 @@ string     \"[^\"]\"|'[^\']\'
 {float_num}         {return FLOAT_NUM;}
 {comments}          {return COMMENT;}
 
-[ \t]*              {/ignore whitespace/}
+[ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
 
 .                   {fprintf(stderr, "Unexpected character: %s\n", yytext); return ERROR;}
