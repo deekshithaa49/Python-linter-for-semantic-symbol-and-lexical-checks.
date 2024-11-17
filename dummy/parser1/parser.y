@@ -27,10 +27,10 @@ statement: for_loop
 for_loop: FOR ID IN expression COLON block
 ;
 
-expression: NUM
-          | ID
+expression: ID
           | RANGE
           | PARA
+          | NUM
           | expression '+' expression
           | expression '*' expression
 ;
