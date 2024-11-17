@@ -1,31 +1,39 @@
 %{
-    #include<stdio.h>
-    void yyerror(const char *s);
-    int yylex();
+#include<stdio.h>
+void yyerror(const char *s);
+int yylex();
 %}
 
-%token FOR IN TRUE FALSE RETURN RANGE PRINT COLON NUM ID BINARY UNARY DATATYPE STRING FLOAT_NUM COMMENT NEWLINE INDENT DEDENT  
+%token FOR IN TRUE FALSE RETURN RANGE PRINT COLON NUM ID BINARY UNARY DATATYPE STRING FLOAT_NUM COMMENT DEDENT INDENT NEWLINE 
+
+%left '+' '-'
+%left '*' '/'
 
 %%
 
 program: statements
 ;
 
+statements: statement
+          | statements statement 
+;
+
 statement: for_loop
-| ID '=' expression
-| NUMBER
+         | ID '=' expression
+         | NUM
+         | INDENT statement DEDENT
 ;
 
 for_loop: FOR ID IN expression COLON block
 ;
 
-expression: ID
-| NUMBER
-| expression '+' expression
+expression: NUM
+          | ID
+          | expression '+' expression
+          | expression '*' expression
 ;
 
-block: statement
-| block statement
+block: '{' statement '}'
 ;
 
 %%
