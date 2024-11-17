@@ -4,7 +4,7 @@ void yyerror(const char *s);
 int yylex();
 %}
 
-%token FOR IN TRUE FALSE RETURN RANGE PRINT COLON NUM ID BINARY UNARY DATATYPE STRING FLOAT_NUM COMMENT DEDENT INDENT NEWLINE ERROR 
+%token FOR IN TRUE FALSE RETURN RANGE PRINT COLON NUM ID BINARY UNARY DATATYPE STRING FLOAT_NUM COMMENT DEDENT INDENT NEWLINE ERROR para 
 
 %left '+' '-'
 %left '*' '/'
@@ -20,7 +20,7 @@ statements: statement
 
 statement: for_loop
          | ID '=' expression
-         | '(' NUM ')'
+         |NUM 
          | INDENT statement DEDENT
 ;
 
@@ -30,6 +30,7 @@ for_loop: FOR ID IN expression COLON block
 expression: NUM
           | ID
           | RANGE
+          | para
           | expression '+' expression
           | expression '*' expression
 ;
