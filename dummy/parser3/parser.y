@@ -1,111 +1,89 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-    extern int yylineno;
-    void yyerror(const char *s);
-    int yylex();
-    void add(char *symbol_type, char *symbol_name, char *data_type, int line_no);
-    int search(char *symbol_name);
-
-    struct symbol {
-        char *name;
-        char *type;
-        char *data_type;
-        int line_no;
-    } symbol_table[100];
-    int symbol_count = 0;
+/* Function declarations for error handling */
+void yyerror(const char *s);
+int yylex();
 %}
 
-%token INCLUDE FOR IF ELSE RETURN ID NUMBER DATATYPE UNARY BINARY STRLT
-%left '+' '-'
-%left '*' '/'
+/* Tokens */
+%token DEF IF ELSE FOR RETURN IN PRINT IDENTIFIER NUMERIC STRING OPERATOR DELIMITER
+
+/* Precedence and associativity (if needed) */
+%right '='
+%left '+' '>'
+%left ','
 
 %%
 
 program:
-    headers main body return_stmt
-;
+    function
+    ;
 
-headers:
-    INCLUDE {
-        add("Header", "stdio.h", "N/A", yylineno);
-    }
-;
+function:
+    DEF IDENTIFIER '(' ')' ':' block
+        { printf("Function: %s\n", $2); }
+    ;
 
-main:
-    DATATYPE ID {
-        add("Variable", $2, $1, yylineno);
-    }
-;
+block:
+    statement_list
+    ;
 
-body:
-    statements
-;
-
-statements:
-    statement
-    | statements statement
-;
+statement_list:
+    /* One or more statements */
+    statement_list statement
+    | statement
+    ;
 
 statement:
-    DATATYPE ID ';' {
-        add("Variable", $2, $1, yylineno);
-    }
-    | ID BINARY statement
-    | ID UNARY ';'
-    | RETURN NUMBER ';' {
-        add("Return", "N/A", "int", yylineno);
-    }
-;
+    assignment
+    | if_statement
+    | for_statement
+    | return_statement
+    | print_statement
+    ;
 
-return_stmt:
-    RETURN NUMBER ';' {
-        add("Return", "N/A", "int", yylineno);
-    }
-    | RETURN ID ';' {
-        add("Return", $2, "N/A", yylineno);
-    }
-;
+assignment:
+    IDENTIFIER '=' expression
+        { printf("Assignment: %s = ...\n", $1); }
+    ;
+
+if_statement:
+    IF expression ':' block
+        { printf("If statement\n"); }
+    | IF expression ':' block ELSE ':' block
+        { printf("If-Else statement\n"); }
+    ;
+
+for_statement:
+    FOR IDENTIFIER IN expression ':' block
+        { printf("For loop with variable %s\n", $2); }
+    ;
+
+return_statement:
+    RETURN expression
+        { printf("Return statement\n"); }
+    ;
+
+print_statement:
+    PRINT '(' STRING ')'
+        { printf("Print statement: %s\n", $3); }
+    ;
+
+expression:
+    IDENTIFIER
+        { printf("Expression: variable %s\n", $1); }
+    | NUMERIC
+        { printf("Expression: number %d\n", $1); }
+    | STRING
+        { printf("Expression: string %s\n", $1); }
+    ;
 
 %%
 
-/* Function to add a symbol to the symbol table */
-void add(char *symbol_type, char *symbol_name, char *data_type, int line_no) {
-    if (search(symbol_name) == 0) {
-        symbol_table[symbol_count].name = strdup(symbol_name);
-        symbol_table[symbol_count].type = strdup(symbol_type);
-        symbol_table[symbol_count].data_type = strdup(data_type);
-        symbol_table[symbol_count].line_no = line_no;
-        symbol_count++;
-    }
-}
-
-/* Function to search the symbol table */
-int search(char *symbol_name) {
-    for (int i = 0; i < symbol_count; i++) {
-        if (strcmp(symbol_table[i].name, symbol_name) == 0) {
-            return 1;  // Found the symbol
-        }
-    }
-    return 0;  // Not found
-}
-
 /* Error handling function */
 void yyerror(const char *s) {
-    fprintf(stderr, "Syntax error: %s\n", s);
+    fprintf(stderr, "Error: %s\n", s);
 }
 
-/* Main function to parse input */
-int main() {
-    yyparse();
-    printf("\nSymbol Table:\n");
-    printf("#######################################################################################\n");
-    printf("Name\t\tType\t\tData Type\tLine Number\n");
-    printf("---------------------------------------------------------------------------------------\n");
-    for (int i = 0; i < symbol_count; i++) {
-        printf("%s\t\t%s\t\t%s\t\t%d\n", symbol_table[i].name, symbol_table[i].type, symbol_table[i].data_type, symbol_table[i].line_no);
-    }
-    return 0;
-}
