@@ -1,37 +1,18 @@
 %{
     #include "y.tab.h"
-    #include<string.h>
-    #include<stdio.h>
-    
-
-    int current_indent = 0;        
-    int indent_stack[100];          
-    int indent_top = -1;            
-
-    void push_indent(int indent) {
-        if (indent_top < 99) { 
-            indent_stack[++indent_top] = indent;
-        }else{
-            fprintf(stderr,"Indentation stack overflow\n");
-        }
-    }
-
-    int pop_indent() {
-        if (indent_top >= 0) {
-            return indent_stack[indent_top--];
-        }
-        return 0;  
-    }
+    #include <string.h>
+    #include <stdio.h>
 %}
 
-num      [0-9]+
-float_num  [0-9]+\.[0-9]+
-id         [a-zA-Z_][a-zA-Z0-9_]*
-datatype   "int"|"float"|"char"|"tuple"|"list"|"set"|"dict"
-unary      \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
-binary     &|^|<|>|==|!=|<=|>=|=|+=|-=|=|/=|%=|*=|/\/=|&=|\|=|^=|<<|>>
-comments   \#([^\n])|\'\'\'(.?)(\'\'\')|\"\"\"(.*?)(\"\"\")
-string      \"[^\"]\"|'[^\']\'
+num         [0-9]+
+float_num   [0-9]+\.[0-9]+
+datatype    int|float|char|tuple|list|set|dict
+id          [a-zA-Z_][a-zA-Z0-9_]*
+unary       \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
+binary      &|^|<|>
+comments    \#([^\n]*)|\'\'\'([^\']*|\'\'\'[^\']*\')*\'\'\'|\"\"\"([^\"]*|\"\"\"[^\"]*\")*\"\"\" 
+string      \"[^\"]*\"|'[^\']*\' 
+
 
 %%
 
@@ -50,30 +31,16 @@ string      \"[^\"]\"|'[^\']\'
 "def"               {return DEF;}
 
 {num}               {return NUM;}
+{datatype}          {return DATATYPE;}
 {id}                {return ID;}
 {binary}            {return BINARY;}
 {unary}             {return UNARY;}
-{datatype}          {return DATATYPE;}
 {string}            {return STRING;}
 {float_num}         {return FLOAT_NUM;}
 {comments}          {return COMMENT;}
 
 [ \t]*              {/ignore whitespace/}
-\n                  {
-    int new_indent = strlen(yytext); 
-
-    while (new_indent < current_indent) {
-        current_indent = pop_indent();
-        return DEDENT;
-    }
-
-    if (new_indent > current_indent) { 
-        push_indent(current_indent);
-        current_indent = new_indent;
-        return INDENT;
-    }
-    return NEWLINE;
-}
+\n                  {return NEWLINE;}
 
 .                   {fprintf(stderr, "Unexpected character: %s\n", yytext); return ERROR;}
 
