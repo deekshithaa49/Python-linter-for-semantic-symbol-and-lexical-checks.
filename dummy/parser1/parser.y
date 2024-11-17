@@ -20,7 +20,7 @@ statements: statement
 
 statement: for_loop
          | ID '=' expression
-         | NUM
+         | '(' NUM ')'
          | INDENT statement DEDENT
 ;
 
@@ -33,7 +33,7 @@ expression: NUM
           | expression '*' expression
 ;
 
-block: '{' statement '}'
+block:  statement 
 ;
 
 %%
