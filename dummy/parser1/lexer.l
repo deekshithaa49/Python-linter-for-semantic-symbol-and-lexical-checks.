@@ -9,10 +9,11 @@ num         [0-9]+
 float_num   [0-9]+\.[0-9]+
 datatype    int|float|char|tuple|list|set|dict
 id          [a-zA-Z_][a-zA-Z0-9_]* 
-unary       \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not
-binary      &|^|<|>
-comments    \#([^\n]*)|\'\'\'([^\']*|\'\'\'[^\']*\')*\'\'\'|\"\"\"([^\"]*|\"\"\"[^\"]*\")*\"\"\" 
-string      \"[^\"]*\"|'[^\']*\' 
+unary       \+|\-|\|\||\/\/|\%|\*|~|and|or|not|is|is\ not|=
+binary      &|^|<|>|==|!=
+comments    \#([^\n])|\'\'(.?)(\'\'\')|\"\"\"(.*?)(\"\"\")
+string      (\"[^\"]*\")|(\'[^\']*\')
+para        \(|\)
 
 
 %%
@@ -25,12 +26,7 @@ string      \"[^\"]*\"|'[^\']*\'
 "range"             {printf("RANGE: %s\n", yytext);return RANGE;}
 "input"             {printf("INPUT: %s\n", yytext);return INPUT;}
 "print"             {printf("PRINT: %s\n", yytext);return PRINT;}
-","                 {printf("SEPEERATOR: %s\n", yytext);return SEPERATOR;}
 ":"                 {printf("COLON: %s\n", yytext);return COLON;}
-"def"               {printf("DEF: %s\n", yytext);return DEF;}
-"("                 {printf("LPAREN: %s\n", yytext);return LPAREN;}
-")"                 {printf("RPAREN: %s\n", yytext);return RPAREN;}
-"=" 		    {printf("ASSIGNMENT: %s\n", yytext);return ASSIGNMENT;}
 
 
 
@@ -42,14 +38,14 @@ string      \"[^\"]*\"|'[^\']*\'
 {string}            {printf("STRING: %s\n", yytext);return STRING;}
 {float_num}         {printf("FLOAT_NUM: %s\n", yytext);return FLOAT_NUM;}
 {comments}          {printf("COMMENT: %s\n", yytext);return COMMENT;}
-
-[ \t]+    { /* Ignore whitespace */ }
-\n        {return NEWLINE;}
+{para}              {printf("PARANTHESIS: %s\n", yytext);return PARA;}
+[ \t]+              { /* Ignore whitespace */ }
+\n                  {return NEWLINE;}
 
 .                   {fprintf(stderr, "Unexpected character: %s\n", yytext); return ERROR;}
 
 %%
 
-int yywrap() {
-    return 1;
+int yywrap(){
+return 1;
 }
