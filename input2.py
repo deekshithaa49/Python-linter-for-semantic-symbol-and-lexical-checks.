@@ -1,10 +1,11 @@
-def main():
-  i=1
-  f=2.5
-  c='A'
-  x=3.5
-  i=x+f*c
-  return 3
-
-if __name__=="main":
-  main()
+for i in range(20):
+	x=10
+	print('hello')
+	if x>5:
+		x=3
+	elif x>6:
+		pass
+	else:
+		z=2
+for i in list:
+	y=10
