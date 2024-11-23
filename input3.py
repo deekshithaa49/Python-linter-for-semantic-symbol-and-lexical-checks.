@@ -1,18 +1,14 @@
-def main():
-  x=1
-  a=3
-  a=x*3+5
-  if x>a:
-    print('Hi!!')
-    a=x*3+100
-    if x>a:
-      print('Hi!!')
-      a=x*3+100
-    else:
-      x=a*3+100
-  else:
-    x=a*3+100
-  return 
-
-if __name__=="__main__":
-  main()
+for i in range(20):
+	x=10
+	print('hello')
+	for j in list:
+		print('hello')
+		x=10
+		if x>5:
+		x=3
+		elif x>6:
+			pass
+		else:
+			z=2
+else:
+		z=1
