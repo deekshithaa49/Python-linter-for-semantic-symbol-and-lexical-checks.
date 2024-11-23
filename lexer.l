@@ -19,6 +19,7 @@ quotes     "\""|"\'"
 %%
 
 "for"               {printf("FOR: %s\n", yytext);return FOR;}
+"while"		        {printf("WHILE: %s\n", yytext);return WHILE;}
 "if"                {printf("IF: %s\n", yytext);return IF;}
 "else"              {printf("ESLE: %s\n", yytext);return ELSE;}
 "in"                {printf("IN: %s\n", yytext);return IN;}
@@ -31,7 +32,7 @@ quotes     "\""|"\'"
 ","                 {printf("SEPEERATOR: %s\n", yytext);return SEPERATOR;}
 ":"                 {printf("COLON: %s\n", yytext);return COLON;}
 "def"               {printf("DEF: %s\n", yytext);return DEF;}
-"=" 		    {printf("ASSIGNMENT: %s\n", yytext);return ASSIGNMENT;}
+"=" 		        {printf("ASSIGNMENT: %s\n", yytext);return ASSIGNMENT;}
 "break"             {printf("BREAK: %s\n", yytext);return BREAK;}
 "None"              {printf("NONE: %s\n", yytext);return NONE;}
 "elif"              {printf("ELIF: %s\n", yytext);return ELIF;}
@@ -46,7 +47,7 @@ quotes     "\""|"\'"
 {float_num}         {printf("FLOAT_NUMBER: %s\n", yytext);return FLOAT_NUM;}
 {comments}          {printf("COMMENT: %s\n", yytext);return COMMENTS;}
 {para}              {printf("PARENTHESIS: %s\n", yytext);return PARA;}
-{quotes}	    {printf("QUOTES: %s\n", yytext);return QUOTES;}
+{quotes}	        {printf("QUOTES: %s\n", yytext);return QUOTES;}
 [ \t]*              {/*ignore whitespace*/}
 \n                  {return NEWLINE;}
 .                   {fprintf(stderr, "Unexpected character: %s\n", yytext); return ERROR;}
